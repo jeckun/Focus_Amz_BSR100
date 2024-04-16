@@ -1,7 +1,7 @@
-import re
-import time
 import platform
 import subprocess
+import time
+import re
 
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
@@ -11,7 +11,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 HOMEPAGE = "https://www.amazon.com"
 ZIP = "10001"
-BSR_URL = "climate-pledge/21377129011/ref=pd_zg_hrsr_climate-pledge"
+BSR_URL = "/climate-pledge/21377129011/ref=pd_zg_hrsr_climate-pledge"
 
 # 启动 Chrome 浏览器
 def star_Browser(url):

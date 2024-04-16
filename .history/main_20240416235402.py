@@ -1,7 +1,7 @@
-import re
-import time
 import platform
 import subprocess
+import time
+import re
 
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
@@ -9,9 +9,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-HOMEPAGE = "https://www.amazon.com"
-ZIP = "10001"
-BSR_URL = "climate-pledge/21377129011/ref=pd_zg_hrsr_climate-pledge"
 
 # 启动 Chrome 浏览器
 def star_Browser(url):
@@ -92,17 +89,17 @@ def set_Zip_code(driver, zipcode):
         time.sleep(5)
         return driver
     except Exception as e:
-        print("I can't find the specified button. error:", e)
+        print("I can't find the specified butten. error:", e)
         return None
 
 
 def main():
-    driver = star_Browser(HOMEPAGE)
-    driver = set_Zip_code(driver, ZIP)
+    driver = star_Browser("https://www.amazon.com")
+    driver = set_Zip_code(driver, '10001')
 
     # 访问指定网址
     if driver:
-        url = f"{HOMEPAGE}/gp/bestsellers/{BSR_URL}"
+        url = "https://www.amazon.com/gp/bestsellers/climate-pledge/21377129011/ref=pd_zg_hrsr_climate-pledge"
         driver.get(url)
 
         # 等待一段时间，然后关闭浏览器

@@ -11,7 +11,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 HOMEPAGE = "https://www.amazon.com"
 ZIP = "10001"
-BSR_URL = "climate-pledge/21377129011/ref=pd_zg_hrsr_climate-pledge"
+BSR_URL = "/climate-pledge/21377129011/ref=pd_zg_hrsr_climate-pledge"
 
 # 启动 Chrome 浏览器
 def star_Browser(url):

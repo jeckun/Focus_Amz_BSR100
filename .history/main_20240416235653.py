@@ -1,7 +1,7 @@
-import re
-import time
 import platform
 import subprocess
+import time
+import re
 
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
@@ -102,7 +102,7 @@ def main():
 
     # 访问指定网址
     if driver:
-        url = f"{HOMEPAGE}/gp/bestsellers/{BSR_URL}"
+        url = "https://www.amazon.com/gp/bestsellers/"
         driver.get(url)
 
         # 等待一段时间，然后关闭浏览器
