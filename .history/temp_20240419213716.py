@@ -132,23 +132,51 @@ class AmazonBrowser:
             return element.get_attribute(attribute)
         except NoSuchElementException:
             return None
-    
+        
+    # @staticmethod
     def parse_asin(self, grid_item):
         return self.find_element_by_xpath(grid_item, ".//div[@data-asin]", "data-asin")
+        # try:
+        #     # 查找具有data-asin属性的div元素
+        #     div_with_asin = grid_item.find_element(By.XPATH, ".//div[@data-asin]")
+        #     # 获取data-asin属性值
+        #     asin = div_with_asin.get_attribute("data-asin")
+        #     return asin
+        # except NoSuchElementException:
+        #     # 没有找到对应的内容，返回空
+        #     return None
     
+    # @staticmethod
     def parse_bsr(self, grid_item):
-        # 获取BSR信息的文本内容
-        bsr_text = self.find_element_by_classname(grid_item, "zg-bdg-text")
-        # 使用正则表达式提取BSR值
-        bsr_value = re.search(r'#(\d+(,\d+)*)', bsr_text).group(1)
-        return bsr_value
-    
+        return self.find_element_by_classname(grid_item, "zg-bdg-text")
+        # try:
+        #     # 查找具有class="grid_item"的div元素
+        #     div_with_class = grid_item.find_element(By.CLASS_NAME, "zg-bdg-text")
+        #     # 获取BSR信息的文本内容
+        #     bsr_text = div_with_class.text
+        #     # 使用正则表达式提取BSR值
+        #     bsr_value = re.search(r'#(\d+(,\d+)*)', bsr_text).group(1)
+        #     return bsr_value
+        # except NoSuchElementException:
+        #     # 没有找到对应的内容，返回空
+        #     return None
+        
+    # @staticmethod
     def parse_title(self, grid_item):
         title = self.find_element_by_classname(grid_item, "_cDEzb_p13n-sc-css-line-clamp-3_g3dy1")
         if title:
             return title
         else:
             return self.find_element_by_classname(grid_item, "_cDEzb_p13n-sc-css-line-clamp-4_2q2cc")
+        # try:
+        #     # 查找具有class="_cDEzb_p13n-sc-css-line-clamp-3_g3dy1"的div元素
+        #     div_with_class = grid_item.find_element(By.CLASS_NAME, "_cDEzb_p13n-sc-css-line-clamp-3_g3dy1")
+        #     # 获取title的文本内容
+        #     title_text = div_with_class.text
+        #     return title_text
+        # except NoSuchElementException:
+        #     # 没有找到对应的内容，返回空
+        #     return None
 
     @staticmethod
     def parse_main_img(grid_item):
@@ -161,29 +189,48 @@ class AmazonBrowser:
             main_img_src = img_tag.get_attribute("src")
             return main_img_src
         except NoSuchElementException:
+            # 没有找到对应的内容，返回空
             return None
     
-    def parse_score(self, grid_item):
-        score_text = self.find_element_by_classname(grid_item, "a-icon-alt")
-        # 使用正则表达式匹配得分
-        match = re.search(r"(\d+\.\d+)", score_text)
-        if match:
-            score = match.group(1)
-            return score
-        else:
+    @staticmethod
+    def parse_score(grid_item):
+        try:
+            # 查找具有class="a-icon-alt"的span元素
+            span_with_class = grid_item.find_element(By.CLASS_NAME, "a-icon-alt")
+            # 获取span标签的文本内容
+            score_text = span_with_class.get_attribute("innerText")
+            # 使用正则表达式匹配得分
+            match = re.search(r"(\d+\.\d+)", score_text)
+            if match:
+                score = match.group(1)
+                return score
+            else:
+                return None
+        except NoSuchElementException:
+            # 没有找到对应的内容，返回空
             return None
 
-    def parse_number(self, grid_item):
-        number_text = self.find_element_by_classname(grid_item, "a-size-small")
-        # 移除数字中的逗号并转换为整数
-        number = int(re.sub(',', '', number_text))
-        return number
+    @staticmethod
+    def parse_number(grid_item):
+        try:
+            number_element = grid_item.find_element(By.CLASS_NAME, "a-size-small")
+            number_text = number_element.text
+            # 移除数字中的逗号并转换为整数
+            number = int(re.sub(',', '', number_text))
+            return number
+        except NoSuchElementException:
+            return None
 
-    def parse_price(self, grid_item):
-        price_text = self.find_element_by_classname(grid_item, "_cDEzb_p13n-sc-price_3mJ9Z")
-        # 移除数字中的逗号并转换为整数
-        price = float(re.sub(r'[^\d.]', '', price_text))
-        return price
+    @staticmethod
+    def parse_price(grid_item):
+        try:
+            price_element = grid_item.find_element(By.CLASS_NAME, "_cDEzb_p13n-sc-price_3mJ9Z")
+            price_text = price_element.text
+            # 移除货币符号和逗号，并将字符串转换为浮点数
+            price = float(re.sub(r'[^\d.]', '', price_text))
+            return price
+        except NoSuchElementException:
+            return None
 
     def get_grid_items(self):
         try:
