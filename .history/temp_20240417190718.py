@@ -6,9 +6,6 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import NoSuchElementException
-from selenium.common.exceptions import TimeoutException
-
 
 
 class AmazonBrowser:
@@ -43,18 +40,16 @@ class AmazonBrowser:
         return driver
 
     def set_zip_code(self, zipcode):
-        # 更新 zip code
         print("Change Zip Code to:", zipcode)
         try:
             element = WebDriverWait(self.driver, 10).until(
                 EC.element_to_be_clickable((By.ID, "glow-ingress-line2"))
             )
             text = element.text
-            if text != "Update location":
-                current_zipcode = re.search(r'\b\d{5}\b', text).group(0)
-                if current_zipcode == zipcode :
-                    print("Don't Change Zip Code.")
-                    return self.driver
+            current_zipcode = re.search(r'\b\d{5}\b', text).group(0)
+            if current_zipcode == zipcode:
+                print("Don't Change Zip Code.")
+                return self.driver
         except Exception as e:
             print("I can't find the specified span tag. error:", e)
             return None
@@ -64,7 +59,7 @@ class AmazonBrowser:
                 EC.element_to_be_clickable((By.ID, "nav-global-location-popover-link"))
             )
             location_link.click()
-            time.sleep(5)
+            time.sleep(1)
         except Exception as e:
             print("I can't find the specified A tag. error:", e)
             return None
@@ -75,7 +70,7 @@ class AmazonBrowser:
             )
             zip_input.clear()
             zip_input.send_keys(zipcode)
-            time.sleep(5)
+            time.sleep(1)
         except Exception as e:
             print("I can't find the specified Input tag. error:", e)
             return None
@@ -85,7 +80,7 @@ class AmazonBrowser:
                 EC.element_to_be_clickable((By.ID, "GLUXZipUpdate"))
             )
             submit_button.click()
-            time.sleep(5)
+            time.sleep(1)
             self.driver.refresh()
             time.sleep(5)
             return self.driver
@@ -98,76 +93,40 @@ class AmazonBrowser:
             self.driver.quit()
             print("Browser closed.")
 
-    def load_all_scroll_to_bottom(self, url):
-        # 模拟向下滚动网页
-        self.driver.get(url)
-        print("Loading page：", url)
+    def load_all_prod(self, url):
+        div_info = ''
+        # 打开网页
+        self.driver.get(url)  # 请将网址替换为目标网站的URL
+
+        # 等待一段时间，确保页面加载完成
         time.sleep(5)
 
-        scroll_distance = 600
-
+        # 模拟向下滚动网页
+        last_height = driver.execute_script("return document.body.scrollHeight")
         while True:
-            new_height, last_height = (scroll_distance, self.driver.execute_script("return document.body.scrollHeight"))
-
-            # 执行向下滚动的 JavaScript 代码
-            self.driver.execute_script(f"window.scrollTo(0, {scroll_distance});")
-            time.sleep(3)
-
-            if new_height > last_height:
+            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            time.sleep(2)
+            new_height = driver.execute_script("return document.body.scrollHeight")
+            if new_height == last_height:
                 break
-            scroll_distance += 600
-        
-        return
+            last_height = new_height
 
-    @staticmethod
-    def parse_asin(grid_item):
-        try:
-            # 查找具有data-asin属性的div元素
-            div_with_asin = grid_item.find_element_by_xpath(".//div[@data-asin]")
-            # 获取data-asin属性值
-            asin = div_with_asin.get_attribute("data-asin")
-            return asin
-        except NoSuchElementException:
-            # 没有找到对应的内容，返回空
-            return None
-
-    def get_grid_items(self):
-        try:
-            grid_items = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_all_elements_located((By.XPATH, "//div[@id='gridItemRoot']"))
-            )
-            return grid_items
-        except TimeoutException:
-            print("Timed out waiting for grid items to load.")
-            return []
-
-    def get_all_pro_info(self):
-        # 定义一个字典用于存储商品信息
-        goods_dict = {}
-
-        # 定位所有id为"gridItemRoot"的div元素
-        grid_items = self.get_grid_items()
-        for grid_item in grid_items:
-            asin = self.parse_asin(grid_item)
-            if asin:
-                goods_dict['asin'] = asin
-        return goods_dict
+        pass
 
 
 def main():
     HOMEPAGE = "https://www.amazon.com"
-    ZIP = "10001"
+    ZIP = "90001"
 
     amazon_browser = AmazonBrowser(HOMEPAGE)
     amazon_browser.set_zip_code(ZIP)
 
     # 访问指定网址
     if amazon_browser.driver:
-        BSR_URL = "automotive/15707241/ref=pd_zg_hrsr_automotive"
+        BSR_URL = "climate-pledge/21377129011/ref=pd_zg_hrsr_climate-pledge"
         url = f"{HOMEPAGE}/gp/bestsellers/{BSR_URL}"
-        amazon_browser.load_all_scroll_to_bottom(url)
-        goods_info = amazon_browser.get_all_pro_info()
-        print(goods_info)
+        amazon_browser.driver.get(url)
+        time.sleep(5)
 
         # 关闭浏览器
         amazon_browser.quit_browser()

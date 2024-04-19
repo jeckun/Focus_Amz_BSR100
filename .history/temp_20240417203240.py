@@ -6,9 +6,6 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import NoSuchElementException
-from selenium.common.exceptions import TimeoutException
-
 
 
 class AmazonBrowser:
@@ -119,39 +116,15 @@ class AmazonBrowser:
         
         return
 
-    @staticmethod
-    def parse_asin(grid_item):
-        try:
-            # 查找具有data-asin属性的div元素
-            div_with_asin = grid_item.find_element_by_xpath(".//div[@data-asin]")
-            # 获取data-asin属性值
-            asin = div_with_asin.get_attribute("data-asin")
-            return asin
-        except NoSuchElementException:
-            # 没有找到对应的内容，返回空
-            return None
-
-    def get_grid_items(self):
-        try:
-            grid_items = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_all_elements_located((By.XPATH, "//div[@id='gridItemRoot']"))
-            )
-            return grid_items
-        except TimeoutException:
-            print("Timed out waiting for grid items to load.")
-            return []
-
     def get_all_pro_info(self):
-        # 定义一个字典用于存储商品信息
-        goods_dict = {}
+        # 执行 JavaScript 文件来获取信息
+        with open('get_goods_info.js', 'r') as file:
+            js_script = file.read()
 
-        # 定位所有id为"gridItemRoot"的div元素
-        grid_items = self.get_grid_items()
-        for grid_item in grid_items:
-            asin = self.parse_asin(grid_item)
-            if asin:
-                goods_dict['asin'] = asin
-        return goods_dict
+        # 执行 JavaScript 文件
+        div_info = self.driver.execute_script(js_script)
+
+        return div_info
 
 
 def main():
@@ -166,8 +139,6 @@ def main():
         BSR_URL = "automotive/15707241/ref=pd_zg_hrsr_automotive"
         url = f"{HOMEPAGE}/gp/bestsellers/{BSR_URL}"
         amazon_browser.load_all_scroll_to_bottom(url)
-        goods_info = amazon_browser.get_all_pro_info()
-        print(goods_info)
 
         # 关闭浏览器
         amazon_browser.quit_browser()

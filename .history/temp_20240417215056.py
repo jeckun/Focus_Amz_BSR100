@@ -7,8 +7,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException
-from selenium.common.exceptions import TimeoutException
-
 
 
 class AmazonBrowser:
@@ -119,7 +117,6 @@ class AmazonBrowser:
         
         return
 
-    @staticmethod
     def parse_asin(grid_item):
         try:
             # 查找具有data-asin属性的div元素
@@ -131,27 +128,17 @@ class AmazonBrowser:
             # 没有找到对应的内容，返回空
             return None
 
-    def get_grid_items(self):
-        try:
-            grid_items = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_all_elements_located((By.XPATH, "//div[@id='gridItemRoot']"))
-            )
-            return grid_items
-        except TimeoutException:
-            print("Timed out waiting for grid items to load.")
-            return []
-
     def get_all_pro_info(self):
-        # 定义一个字典用于存储商品信息
-        goods_dict = {}
-
+        div_info = ""
         # 定位所有id为"gridItemRoot"的div元素
-        grid_items = self.get_grid_items()
+        grid_items = self.driver.find_elements_by_xpath("//div[@id='gridItemRoot']")
+
+        # 循环遍历每个gridItemRoot元素
         for grid_item in grid_items:
-            asin = self.parse_asin(grid_item)
-            if asin:
-                goods_dict['asin'] = asin
-        return goods_dict
+            # 获取指定内容，这里以文本内容为例
+            item_content = grid_item.text
+            print(item_content)  # 输出指定内容
+        return div_info
 
 
 def main():

@@ -6,9 +6,6 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import NoSuchElementException
-from selenium.common.exceptions import TimeoutException
-
 
 
 class AmazonBrowser:
@@ -98,61 +95,81 @@ class AmazonBrowser:
             self.driver.quit()
             print("Browser closed.")
 
-    def load_all_scroll_to_bottom(self, url):
-        # 模拟向下滚动网页
-        self.driver.get(url)
-        print("Loading page：", url)
+    def load_all_prod(self, url):
+        div_info = ''
+        # 打开网页
+        self.driver.get(url)  # 请将网址替换为目标网站的URL
+
+        # 等待一段时间，确保页面加载完成
         time.sleep(5)
 
-        scroll_distance = 600
+        # 模拟向下滚动网页
+        # 获取当前网页的总高度
+        last_height = self.driver.execute_script("return document.body.scrollHeight")
+
+        # 设置每次向下滚动的像素距离
+        scroll_distance = 500
 
         while True:
-            new_height, last_height = (scroll_distance, self.driver.execute_script("return document.body.scrollHeight"))
+            # 计算滚动的目标位置
+            new_height = min(scroll_distance, self.driver.execute_script("return document.body.scrollHeight"))
 
             # 执行向下滚动的 JavaScript 代码
-            self.driver.execute_script(f"window.scrollTo(0, {scroll_distance});")
-            time.sleep(3)
+            self.driver.execute_script(f"window.scrollTo(0, {new_height});")
+            time.sleep(2)  # 等待加载新内容
 
-            if new_height > last_height:
+            # 如果滚动后的高度与滚动前的高度相同，则说明已经到达了页面底部
+            if new_height == last_height:
                 break
-            scroll_distance += 600
+
+            # 更新滚动前的高度为当前高度
+            last_height = new_height
         
-        return
-
-    @staticmethod
-    def parse_asin(grid_item):
+        # 检查网页是否加载完毕
         try:
-            # 查找具有data-asin属性的div元素
-            div_with_asin = grid_item.find_element_by_xpath(".//div[@data-asin]")
-            # 获取data-asin属性值
-            asin = div_with_asin.get_attribute("data-asin")
-            return asin
-        except NoSuchElementException:
-            # 没有找到对应的内容，返回空
-            return None
+            WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "a-declarative")))
+        except Exception as e:
+            print("页面加载超时：", e)
 
-    def get_grid_items(self):
-        try:
-            grid_items = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_all_elements_located((By.XPATH, "//div[@id='gridItemRoot']"))
-            )
-            return grid_items
-        except TimeoutException:
-            print("Timed out waiting for grid items to load.")
-            return []
+        # 查找所有 class='a-declarative' 的元素
+        div_elements = self.driver.find_elements_by_class_name("a-declarative")
 
-    def get_all_pro_info(self):
-        # 定义一个字典用于存储商品信息
-        goods_dict = {}
+        # 遍历所有找到的元素
+        for div_element in div_elements:
+            # 查找当前元素下属性为 name 或者 data-cy 的子元素
+            name_elements = div_element.find_elements_by_css_selector('[name]')
+            data_cy_elements = div_element.find_elements_by_css_selector('[data-cy="title-recipe"]')
 
-        # 定位所有id为"gridItemRoot"的div元素
-        grid_items = self.get_grid_items()
-        for grid_item in grid_items:
-            asin = self.parse_asin(grid_item)
-            if asin:
-                goods_dict['asin'] = asin
-        return goods_dict
+            # 遍历所有属性为 name 或者 data-cy 的子元素
+            for name_element in name_elements:
+                div_info += name_element.text.strip()
 
+                # 查找国家：查找当前元素下的所有 i 标签
+                i_elements = name_element.find_elements_by_tag_name('i')
+
+                # 遍历所有 i 标签
+                for i_element in i_elements:
+                    # 检查 i 标签的 class 值
+                    class_list = i_element.get_attribute("class")
+
+                    # 如果 class 值包含 "flag-icon-cn"，则国家为中国
+                    if "flag-icon-cn" in class_list:
+                        div_info += '国家: 中国'
+                    # 如果 class 值包含 "flag-icon-us"，则国家为美国
+                    elif "flag-icon-us" in class_list:
+                        div_info += '国家: 美国'
+                    # 其他情况，国家为其他
+                    else:
+                        div_info += '国家: 其他'
+
+            # 查找标题
+            for data_cy_element in data_cy_elements:
+                h2_elements = data_cy_element.find_elements_by_tag_name('h2')
+                for h2_element in h2_elements:
+                    a_element = h2_element.find_element_by_tag_name('a')
+                    if a_element:
+                        div_info += "标题: " + a_element.text.strip() + "\n"
+        return div_info
 
 def main():
     HOMEPAGE = "https://www.amazon.com"
@@ -163,11 +180,11 @@ def main():
 
     # 访问指定网址
     if amazon_browser.driver:
+        # BSR_URL = "climate-pledge/21377129011/ref=pd_zg_hrsr_climate-pledge"
         BSR_URL = "automotive/15707241/ref=pd_zg_hrsr_automotive"
         url = f"{HOMEPAGE}/gp/bestsellers/{BSR_URL}"
-        amazon_browser.load_all_scroll_to_bottom(url)
-        goods_info = amazon_browser.get_all_pro_info()
-        print(goods_info)
+        amazon_browser.load_all_prod(url)
+        time.sleep(5)
 
         # 关闭浏览器
         amazon_browser.quit_browser()
