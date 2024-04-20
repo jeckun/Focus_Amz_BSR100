@@ -297,6 +297,7 @@ class AmazonBrowser:
             goods_list.append(goods_dict)
         return goods_list
 
+
 def read_config(filename):
     config = configparser.ConfigParser()
     config.read(filename)
@@ -309,6 +310,11 @@ def main():
     BSR_URL = config.get('BSR_URL')
     current_datetime = datetime.now()
     OUTPUT_FILE = config.get('BSR') + current_datetime.strftime("_%Y%m%d%H%M") + '.xlsx'
+
+    # ZIP = "90001"
+    # HOMEPAGE = "https://www.amazon.com"
+    # BSR_URL = "automotive/15707241/ref=pd_zg_hrsr_automotive"
+    # output_file = "automotive_20240420.xlsx"
 
     amazon_browser = AmazonBrowser(HOMEPAGE)
     amazon_browser.set_zip_code(ZIP)

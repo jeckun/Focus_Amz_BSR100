@@ -297,6 +297,7 @@ class AmazonBrowser:
             goods_list.append(goods_dict)
         return goods_list
 
+
 def read_config(filename):
     config = configparser.ConfigParser()
     config.read(filename)
