@@ -2,7 +2,6 @@ import re
 import time
 import platform
 import subprocess
-import pandas as pd
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -300,12 +299,12 @@ def main():
     ZIP = "90001"
     HOMEPAGE = "https://www.amazon.com"
     BSR_URL = "automotive/15707241/ref=pd_zg_hrsr_automotive"
-    output_file = "automotive_20240420.xlsx"
+    output_file = "automotive_.xlsx"
 
     amazon_browser = AmazonBrowser(HOMEPAGE)
     amazon_browser.set_zip_code(ZIP)
     goods_info = []
-    keys = ["ASIN", "URL", "主图", "标题", "配送", "品牌", "卖家", "国家", "卖家数", "上架日期", "上架天数", "是否新品", "大类", "大类BSR", "子类", "子类BSR", "评分", "评分数", "评分段", "变体数", "销售数量",  "价格", "销售额",  "近30天销量(父体)", "近30天销量(子体)", "毛利率", "FBA费用", "全部流量词", "自然搜索词", "广告流量词", "搜索推荐词",  "重量", "尺寸", "Size", "Color", "Style", "Coupon", "Material Type", "Pattern Name", "Model", "Item Package Quantity", "Number of Items", "Collection time"]
+    keys = ["ASIN", "URL", "主图", "标题", "品牌", "卖家", "国家", "上架日期", "上架天数", "是否新品", "大类", "大类BSR", "子类", "子类BSR", "评分", "评分数", "评分段", "近30天销量(父体)", "近30天销量(子体)", "销售数量", "变体数", "价格", "销售额", "毛利率", "FBA费用", "配送", "卖家数", "全部流量词", "自然搜索词", "广告流量词", "搜索推荐词",  "重量", "尺寸", "Size", "Color", "Style", "Coupon", "Material Type", "Pattern Name", "Model", "Item Package Quantity", "Number of Items"]
 
     # 访问指定网址
     if amazon_browser.driver:

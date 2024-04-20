@@ -2,13 +2,12 @@ import re
 import time
 import platform
 import subprocess
-import pandas as pd
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
-from Collating_Best_Sellers_ranking_data import parse_string_to_dict, sort_dict
+
 
 class AmazonBrowser:
     def __init__(self, url):
@@ -78,6 +77,9 @@ class AmazonBrowser:
             return None
 
         try:
+            # submit_button = WebDriverWait(self.driver, 10).until(
+            #     EC.element_to_be_clickable((By.ID, "GLUXZipUpdate"))
+            # )
             submit_button = self.find_element_by_id("GLUXZipUpdate")
             submit_button.click()
             time.sleep(5)
@@ -92,28 +94,26 @@ class AmazonBrowser:
         if self.driver:
             self.driver.quit()
             print("Browser closed.")
-    
-    def load_page(self, url):
+
+    def load_all_scroll_to_bottom(self, url):
+        # 模拟向下滚动网页
         self.driver.get(url)
         print("Loading page：", url)
         time.sleep(5)
 
-    def webpage_scroll_to_bottom(self):
-        # 模拟向下滚动网页
-        scroll_distance = 800
+        scroll_distance = 600
 
         while True:
             new_height, last_height = (scroll_distance, self.driver.execute_script("return document.body.scrollHeight"))
 
             # 执行向下滚动的 JavaScript 代码
             self.driver.execute_script(f"window.scrollTo(0, {scroll_distance});")
-            time.sleep(1)
+            time.sleep(3)
 
             if new_height > last_height:
                 break
             scroll_distance += 600
         
-        time.sleep(5)
         return
     
     def find_element_by_id(self, id=""):
@@ -124,6 +124,7 @@ class AmazonBrowser:
             return element
         except Exception as e:
             return None
+
 
     @staticmethod
     def find_element_by_classname(es, class_name="", attribute="innerText"):
@@ -147,10 +148,8 @@ class AmazonBrowser:
     def parse_bsr(self, grid_item):
         # 获取BSR信息的文本内容
         bsr_text = self.find_element_by_classname(grid_item, "zg-bdg-text")
-        if bsr_text:
-            bsr_value = re.search(r'#(\d+(,\d+)*)', bsr_text).group(1)
-        else:
-            bsr_value = ''
+        # 使用正则表达式提取BSR值
+        bsr_value = re.search(r'#(\d+(,\d+)*)', bsr_text).group(1)
         return bsr_value
     
     def parse_title(self, grid_item):
@@ -174,10 +173,9 @@ class AmazonBrowser:
             return None
     
     def parse_score(self, grid_item):
-        match = None
         score_text = self.find_element_by_classname(grid_item, "a-icon-alt")
-        if score_text:
-            match = re.search(r"(\d+\.\d+)", score_text)
+        # 使用正则表达式匹配得分
+        match = re.search(r"(\d+\.\d+)", score_text)
         if match:
             score = match.group(1)
             return score
@@ -186,63 +184,15 @@ class AmazonBrowser:
 
     def parse_number(self, grid_item):
         number_text = self.find_element_by_classname(grid_item, "a-size-small")
-        if number_text:
-            number = int(re.sub(',', '', number_text))
-        else:
-            number = 0
+        # 移除数字中的逗号并转换为整数
+        number = int(re.sub(',', '', number_text))
         return number
 
     def parse_price(self, grid_item):
         price_text = self.find_element_by_classname(grid_item, "_cDEzb_p13n-sc-price_3mJ9Z")
-        if price_text:
-            price = float(re.sub(r'[^\d.]', '', price_text))
-        else:
-            price = 0
+        # 移除数字中的逗号并转换为整数
+        price = float(re.sub(r'[^\d.]', '', price_text))
         return price
-
-    @staticmethod
-    def find_mjjl_element(grid_item):
-        # 查找卖家精灵数据
-        try:
-            element = grid_item.find_element(By.XPATH, ".//div[@data-v-app]")
-            return element
-        except Exception as e:
-            return None
-
-    def parse_gj(self, element):
-        try:
-            # 执行 JavaScript 脚本来获取国家信息
-            country = self.driver.execute_script('''
-                var flagIconUsElements = arguments[0].querySelectorAll('.flag-icon-us');
-                var flagIconCnElements = arguments[0].querySelectorAll('.flag-icon-cn');
-
-                if (flagIconUsElements.length > 0) {
-                    return "美国";
-                } else if (flagIconCnElements.length > 0) {
-                    return "中国";
-                } else {
-                    return "其他";
-                }
-            ''', element)
-            return country
-        except Exception as e:
-            print("An error occurred while parsing country:", e)
-            return None
-
-    def click_last_link(self):
-        # 获取下一页数据
-        try:
-            # 使用 CSS 选择器定位具有特定类名的元素
-            last_link = self.driver.find_element(By.CSS_SELECTOR, ".a-last")
-            # 点击该元素
-            last_link.find_element(By.TAG_NAME, 'a').click()
-            print("Clicked the last link successfully.")
-            time.sleep(5)
-            return True
-        except Exception as e:
-            print("An error occurred while clicking the last link:", e)
-            return False
-
 
     def get_grid_items(self):
         try:
@@ -270,73 +220,41 @@ class AmazonBrowser:
             number = self.parse_number(grid_item)
             price = self.parse_price(grid_item)
             if asin:
-                goods_dict['ASIN'] = asin
+                goods_dict['asin'] = asin
             if bsr:
-                goods_dict['子类BSR'] = bsr
+                goods_dict['bsr'] = bsr
             if title:
-                goods_dict['标题'] = title
+                goods_dict['title'] = title
             if main_img:
-                goods_dict['主图'] = main_img
+                goods_dict['main_img'] = main_img
             if score:
-                goods_dict['评分'] = score
+                goods_dict['score'] = score
             if number:
-                goods_dict['评分数'] = number
+                goods_dict['number'] = number
             if price:
-                goods_dict['价格'] = price
-            mjjl_data = self.find_mjjl_element(grid_item)
-            if mjjl_data:
-                data = mjjl_data.text.replace('\n', ' ')
-                gj = self.parse_gj(mjjl_data)
-                if gj:
-                    data += f"国家: {gj}"
-                goods_dict.update(parse_string_to_dict(data))
-                pass
+                goods_dict['price'] = price
 
             goods_list.append(goods_dict)
         return goods_list
 
 
 def main():
-    ZIP = "90001"
     HOMEPAGE = "https://www.amazon.com"
-    BSR_URL = "automotive/15707241/ref=pd_zg_hrsr_automotive"
-    output_file = "automotive_20240420.xlsx"
+    ZIP = "90001"
 
     amazon_browser = AmazonBrowser(HOMEPAGE)
     amazon_browser.set_zip_code(ZIP)
-    goods_info = []
-    keys = ["ASIN", "URL", "主图", "标题", "配送", "品牌", "卖家", "国家", "卖家数", "上架日期", "上架天数", "是否新品", "大类", "大类BSR", "子类", "子类BSR", "评分", "评分数", "评分段", "变体数", "销售数量",  "价格", "销售额",  "近30天销量(父体)", "近30天销量(子体)", "毛利率", "FBA费用", "全部流量词", "自然搜索词", "广告流量词", "搜索推荐词",  "重量", "尺寸", "Size", "Color", "Style", "Coupon", "Material Type", "Pattern Name", "Model", "Item Package Quantity", "Number of Items", "Collection time"]
 
     # 访问指定网址
     if amazon_browser.driver:
+        BSR_URL = "automotive/15707241/ref=pd_zg_hrsr_automotive"
         url = f"{HOMEPAGE}/gp/bestsellers/{BSR_URL}"
-        amazon_browser.load_page(url)
-        amazon_browser.webpage_scroll_to_bottom()
+        amazon_browser.load_all_scroll_to_bottom(url)
         goods_info = amazon_browser.get_all_pro_info()
+        print(goods_info)
 
-        while True:
-            if amazon_browser.click_last_link():
-                amazon_browser.webpage_scroll_to_bottom()
-                next_data = amazon_browser.get_all_pro_info()
-                goods_info += next_data
-            else:
-                break
-
-    # 数据整理
-    parsed_data = []
-    for row in goods_info:
-        parsed_data.append(sort_dict(row, keys))
-    # 将解析结果写入Excel表格
-    df = pd.DataFrame(parsed_data)
-    df.to_excel(output_file, index=False)
-
-    print("解析完成，并已将结果写入到Excel表格:", output_file)
-
-    pass
-
-    # 关闭浏览器
-    amazon_browser.quit_browser()
+        # 关闭浏览器
+        amazon_browser.quit_browser()
 
 if __name__ == "__main__":
     main()
-    print("App exited.")
