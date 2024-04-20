@@ -12,7 +12,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from lib import parse_string_to_dict, sort_dict
 
-
 class AmazonBrowser:
     def __init__(self, url):
         # 启动 Chrome 浏览器
@@ -239,11 +238,11 @@ class AmazonBrowser:
             last_link = self.driver.find_element(By.CSS_SELECTOR, ".a-last")
             # 点击该元素
             last_link.find_element(By.TAG_NAME, 'a').click()
-            print("Clicked the next link successfully.")
+            print("Clicked the last link successfully.")
             time.sleep(5)
             return True
         except Exception as e:
-            print("We have reached the last page.")
+            print("An error occurred while clicking the last link:", e)
             return False
 
 

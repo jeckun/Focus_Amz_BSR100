@@ -243,7 +243,7 @@ class AmazonBrowser:
             time.sleep(5)
             return True
         except Exception as e:
-            print("We have reached the last page.")
+            print("An error occurred while clicking the last link:")
             return False
 
 

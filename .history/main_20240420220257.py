@@ -2,13 +2,16 @@ import re
 import time
 import platform
 import subprocess
+import configparser
 import pandas as pd
+from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
-from Collating_Best_Sellers_ranking_data import parse_string_to_dict, sort_dict
+from lib import parse_string_to_dict, sort_dict
+
 
 class AmazonBrowser:
     def __init__(self, url):
@@ -295,12 +298,18 @@ class AmazonBrowser:
             goods_list.append(goods_dict)
         return goods_list
 
+def read_config(filename):
+    config = configparser.ConfigParser()
+    config.read(filename)
+    return config['Parameters']
 
 def main():
-    ZIP = "90001"
-    HOMEPAGE = "https://www.amazon.com"
-    BSR_URL = "automotive/15707241/ref=pd_zg_hrsr_automotive"
-    output_file = "automotive_20240420.xlsx"
+    config = read_config('config.ini')
+    ZIP = config.get('ZIP')
+    HOMEPAGE = config.get('HOMEPAGE')
+    BSR_URL = config.get('BSR_URL')
+    current_datetime = datetime.now()
+    OUTPUT_FILE = config.get('BSR') + current_datetime.strftime("_%Y%m%d%H%M") + '.xlsx'
 
     amazon_browser = AmazonBrowser(HOMEPAGE)
     amazon_browser.set_zip_code(ZIP)
@@ -328,9 +337,9 @@ def main():
         parsed_data.append(sort_dict(row, keys))
     # 将解析结果写入Excel表格
     df = pd.DataFrame(parsed_data)
-    df.to_excel(output_file, index=False)
+    df.to_excel(OUTPUT_FILE, index=False)
 
-    print("解析完成，并已将结果写入到Excel表格:", output_file)
+    print("解析完成，并已将结果写入到Excel表格:", OUTPUT_FILE)
 
     pass
 
