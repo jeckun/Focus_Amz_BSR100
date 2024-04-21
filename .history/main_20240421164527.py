@@ -103,7 +103,7 @@ class AmazonBrowser:
 
     def webpage_scroll_to_bottom(self):
         print("Scroll page to bottom.")
-
+        
         # 模拟向下滚动网页
         scroll_distance = 800
 
@@ -260,7 +260,6 @@ class AmazonBrowser:
             return []
 
     def get_all_pro_info(self):
-        print("Parse goods info.")
         # 定义一个字典用于存储商品信息
         goods_list = []
 
