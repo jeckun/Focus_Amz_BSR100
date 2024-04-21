@@ -1,22 +1,7 @@
 import re
 import pandas as pd
-from sqlalchemy import create_engine
-
 from datetime import datetime
 from collections import OrderedDict
-
-# 从 Excel 文件读取数据到 DataFrame
-def load_xlsx_to_db(file_name, ps, sheet_name='Sheet1'):
-    print(f'Load {file_name} to mysql db.')
-    df = pd.read_excel(file_name, sheet_name='Sheet1')
-
-    # 连接到 MySQL 数据库
-    engine = create_engine(f'mysql+pymysql://root:{ps}@localhost/amazone_goods')
-
-    # 将 DataFrame 中的数据写入到 MySQL 数据库的 goods 表中
-    df.to_sql('goods', con=engine, if_exists='append', index=False)
-    print("Data imported successfully.")
-
 
 # 解析类目排名字符串
 def parse_string(input_string):
@@ -91,7 +76,7 @@ def parse_string_to_dict(data_string):
     data_dict = {}
     sell_num = 0
     a = data_string.find('卖家')
-    if a>0:
+    if a:
         a = data_string.find('卖家', a+1)
         data_string = data_string[:a]+'卖家数'+data_string[a+2:]
 

@@ -342,7 +342,7 @@ def main():
 
     print("解析完成，并已将结果写入到Excel表格:", OUTPUT_FILE)
 
-    load_xlsx_to_db(OUTPUT_FILE, RPS)
+    load_xlsx_to_db
 
     # 关闭浏览器
     amazon_browser.quit_browser()

@@ -1,0 +1,9 @@
+ASIN: B00IPS4APU, Collection time: 2024-04-20 22:00:00, Error: (1146, "Table 'amazone_goods.goods' doesn't exist")
+ASIN: B00IPS4APU, Collection time: 2024-04-20 22:00:00, Error: nan can not be used with MySQL
+ASIN: B00IPS4APU, Collection time: 2024-04-20 22:00:00, Error: not enough arguments for format string
+ASIN: B00IPS4APU, Collection time: 2024-04-20 22:00:00, Error: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '(父体), 近30天销量(子体), 毛利率, FBA费用, 全部流量词, 自然æ' at line 1")
+ASIN: B00IPS4APU, Collection time: 2024-04-20 22:00:00, Error: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''近30天销量(父体)', '近30天销量(子体)', 毛利率, FBA费用, 全部' at line 1")
+ASIN: B00IPS4APU, Collection time: 2024-04-20 22:00:00, Error: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''近30天销量(父体)' = 19407, '近30天销量(子体)' = 20000, 毛利率 = ' at line 1")
+ASIN: B0CZRJY15H, Collection time: 2024-04-20 22:00:00, Error: nan can not be used with MySQL
+ASIN: B0CZRJY15H, Collection time: 2024-04-20 22:00:00, Error: nan can not be used with MySQL
+ASIN: B0CZRJY15H, Collection time: 2024-04-20 22:00:00, Error: nan can not be used with MySQL

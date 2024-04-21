@@ -1,22 +1,7 @@
 import re
 import pandas as pd
-from sqlalchemy import create_engine
-
 from datetime import datetime
 from collections import OrderedDict
-
-# 从 Excel 文件读取数据到 DataFrame
-def load_xlsx_to_db(file_name, ps, sheet_name='Sheet1'):
-    print(f'Load {file_name} to mysql db.')
-    df = pd.read_excel(file_name, sheet_name='Sheet1')
-
-    # 连接到 MySQL 数据库
-    engine = create_engine(f'mysql+pymysql://root:{ps}@localhost/amazone_goods')
-
-    # 将 DataFrame 中的数据写入到 MySQL 数据库的 goods 表中
-    df.to_sql('goods', con=engine, if_exists='append', index=False)
-    print("Data imported successfully.")
-
 
 # 解析类目排名字符串
 def parse_string(input_string):
@@ -90,19 +75,18 @@ def parse_string_to_dict(data_string):
     # 初始化一个字典来存储属性和值
     data_dict = {}
     sell_num = 0
-    a = data_string.find('卖家')
-    if a>0:
-        a = data_string.find('卖家', a+1)
-        data_string = data_string[:a]+'卖家数'+data_string[a+2:]
 
     # 定义字符串中关键字段名
-    keys = ['ASIN', '品牌', '卖家', '配送', '卖家数', '加入产品库', '近30天销量(父体)', '近30天销量(子体)', '销售额', 'FBA费用', '毛利率', '变体数', '价格', 'Coupon', '评分(评分数)', 'Color', 'Pattern Name', 'Style', 'Model', 'Number of Items', 'Size', 'Material Type', 'Item Package Quantity', '重量', '尺寸', '上架时间', '全部流量词', '自然搜索词', '广告流量词', '搜索推荐词', '关键词反查', '国家', '标题']
+    keys = ['ASIN', '品牌', '卖家', '配送', '卖家', '加入产品库', '近30天销量(父体)', '近30天销量(子体)', '销售额', 'FBA费用', '毛利率', '变体数', '价格', 'Coupon', '评分(评分数)', 'Color', 'Pattern Name', 'Style', 'Model', 'Number of Items', 'Size', 'Material Type', 'Item Package Quantity', '重量', '尺寸', '上架时间', '全部流量词', '自然搜索词', '广告流量词', '搜索推荐词', '关键词反查', '国家', '标题']
 
     # 处理关键字段出现顺序的问题
     positions = {key: data_string.find(key) for key in keys} # 找出每个数组元素在字符串中的位置
     sorted_keys = sorted(keys, key=lambda key: positions[key])  # 按位置对数组进行排序
     keys = [key for key in sorted_keys if positions[key] != -1] # 删除没有找到的数组元素
     keys.append('Collection time')
+
+    if len(keys)>5 and (keys[2], keys[3], keys[4]) == ('卖家', '卖家', '配送'):
+        keys[2], keys[3], keys[4] = keys[2], keys[4], keys[3]
 
     # 循环提取关键字段的值
     for index, key in enumerate(keys):
@@ -123,6 +107,10 @@ def parse_string_to_dict(data_string):
                     next_key_index = data_string.find(next_key)
                     break
 
+            # 判断是不是第二次出现卖家
+            if key == "卖家" and index > 2:
+                key  = "卖家数"
+
             # 如果找到下一个键的索引，则将两个键名称之间的内容作为当前键的值
             if next_key_index is not None:
                 value = data_string[:next_key_index]
@@ -135,13 +123,14 @@ def parse_string_to_dict(data_string):
                     del result['子类BSR']
                     data_dict.update(result)
                 elif key == "评分(评分数)": 
-                    pass
+                    result = parse_rating_string(value)
+                    data_dict.update(result)
                 elif key == "上架时间": 
                     result = parse_shelf_string(value)
                     data_dict.update(result)
-                elif key in ("卖家数", "销售额", "近30天销量(父体)", "近30天销量(子体)", "变体数", "全部流量词", "自然搜索词", "广告流量词", "搜索推荐词", "FBA费用"): 
+                elif key in ("卖家数", "近30天销量(父体)", "近30天销量(子体)", "变体数", "全部流量词", "自然搜索词", "广告流量词", "搜索推荐词", "FBA费用"): 
                     data_dict[key.replace('(','').replace(')','')] = float(value.strip().replace(',','').replace('+','').replace('N/A','0').replace('<','').replace(' ','').replace('-', '0').replace('$',''))
-                elif key in ("关键词反查", "价格", "ASIN"):
+                elif key in ("关键词反查", "价格"):
                     pass
                 else:
                     data_dict[key] = value.strip()

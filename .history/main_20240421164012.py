@@ -10,7 +10,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
-from lib import parse_string_to_dict, sort_dict, load_xlsx_to_db
+from lib import parse_string_to_dict, sort_dict
 
 
 class AmazonBrowser:
@@ -342,7 +342,7 @@ def main():
 
     print("解析完成，并已将结果写入到Excel表格:", OUTPUT_FILE)
 
-    load_xlsx_to_db(OUTPUT_FILE, RPS)
+    pass
 
     # 关闭浏览器
     amazon_browser.quit_browser()

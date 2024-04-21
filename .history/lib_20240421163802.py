@@ -6,15 +6,15 @@ from datetime import datetime
 from collections import OrderedDict
 
 # 从 Excel 文件读取数据到 DataFrame
-def load_xlsx_to_db(file_name, ps, sheet_name='Sheet1'):
-    print(f'Load {file_name} to mysql db.')
+def load_xlsx_to_db(file_name, sheet_name='Sheet1'):
     df = pd.read_excel(file_name, sheet_name='Sheet1')
 
     # 连接到 MySQL 数据库
-    engine = create_engine(f'mysql+pymysql://root:{ps}@localhost/amazone_goods')
+    engine = create_engine('mysql+pymysql://root:Xsk58&9jS@localhost/amazone_goods')
 
     # 将 DataFrame 中的数据写入到 MySQL 数据库的 goods 表中
     df.to_sql('goods', con=engine, if_exists='append', index=False)
+
     print("Data imported successfully.")
 
 

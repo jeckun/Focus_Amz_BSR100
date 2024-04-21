@@ -1,22 +1,7 @@
 import re
 import pandas as pd
-from sqlalchemy import create_engine
-
 from datetime import datetime
 from collections import OrderedDict
-
-# 从 Excel 文件读取数据到 DataFrame
-def load_xlsx_to_db(file_name, ps, sheet_name='Sheet1'):
-    print(f'Load {file_name} to mysql db.')
-    df = pd.read_excel(file_name, sheet_name='Sheet1')
-
-    # 连接到 MySQL 数据库
-    engine = create_engine(f'mysql+pymysql://root:{ps}@localhost/amazone_goods')
-
-    # 将 DataFrame 中的数据写入到 MySQL 数据库的 goods 表中
-    df.to_sql('goods', con=engine, if_exists='append', index=False)
-    print("Data imported successfully.")
-
 
 # 解析类目排名字符串
 def parse_string(input_string):
@@ -91,9 +76,8 @@ def parse_string_to_dict(data_string):
     data_dict = {}
     sell_num = 0
     a = data_string.find('卖家')
-    if a>0:
-        a = data_string.find('卖家', a+1)
-        data_string = data_string[:a]+'卖家数'+data_string[a+2:]
+    a = data_string.find('卖家', a+1)
+    data_string = data_string[:a]+'卖家数'+data_string[a+2:]
 
     # 定义字符串中关键字段名
     keys = ['ASIN', '品牌', '卖家', '配送', '卖家数', '加入产品库', '近30天销量(父体)', '近30天销量(子体)', '销售额', 'FBA费用', '毛利率', '变体数', '价格', 'Coupon', '评分(评分数)', 'Color', 'Pattern Name', 'Style', 'Model', 'Number of Items', 'Size', 'Material Type', 'Item Package Quantity', '重量', '尺寸', '上架时间', '全部流量词', '自然搜索词', '广告流量词', '搜索推荐词', '关键词反查', '国家', '标题']
