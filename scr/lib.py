@@ -43,9 +43,6 @@ def parse_string(input_string):
 def parse_rating_string(rating_string):
     # 定义正则表达式模式
     pattern = r'(\d+\.\d+)\((\d+)\)'
-    # pattern = r'评分\(评分数\):(\d+\.\d+)\((\d+)\)'
-
-    # 使用正则表达式匹配字符串
     match = re.match(pattern, rating_string.replace(',',''))
 
     # 如果匹配成功，提取评分和评分数
@@ -53,8 +50,6 @@ def parse_rating_string(rating_string):
         rating = float(match.group(1))
         rating_count = int(match.group(2))
         rating_level = '4.5 以上' if rating >= 4.5 else '3.5 - 4.5' if rating >= 3.5 else '0 分' if rating == 0 else '3.5 以下'
-
-        # 返回解析结果字典
         result = {"评分": rating, "评分数": rating_count, "评分段": rating_level}
         return result
     else:
@@ -64,8 +59,6 @@ def parse_rating_string(rating_string):
 def parse_shelf_string(shelf_string):
     # 定义正则表达式模式
     pattern = r'(\d{4}-\d{2}-\d{2})\((\d+)天\)'
-
-    # 使用正则表达式匹配字符串
     match = re.match(pattern, shelf_string.replace(',', '').replace('N/A', '0'))
 
     # 如果匹配成功,提取上架日期和上架天数
