@@ -27,16 +27,12 @@ def parse_string(input_string):
     if "#" in input_string:
         parts = input_string.strip().split("#")
         # 解析每个拆分后的字符串
-        i = 0
-        for index, part in enumerate(parts):
-            if part:
-                sub_parts = part.strip().split(" in ")
-                n1 = '大类' if i == 0 else '子类'
-                n2 = '大类BSR' if i == 0 else '子类BSR'
-                i += 1
-                result[n1] = sub_parts[1].strip()
-                result[n2] = int(sub_parts[0].replace(",", "").replace('N/A','0'))
-        del result['子类BSR']
+        for index, part in enumerate(parts[1:]):
+            sub_parts = part.strip().split(" in ")
+            n1 = '大类' if index == 0 else '子类'
+            n2 = '大类BSR' if index == 0 else '子类BSR'
+            result[n1] = sub_parts[1].strip()
+            result[n2] = int(sub_parts[0].replace(",", "").replace('N/A','0'))
     return result
 
 # 解析评分字符串
@@ -138,6 +134,7 @@ def parse_string_to_dict(data_string):
                     data_dict["URL"] = "https://www.amazon.com/dp/" + value.strip()
                 elif key == "加入产品库":
                     result = parse_string(value)
+                    # del result['子类BSR']
                     data_dict.update(result)
                 elif key == "评分(评分数)": 
                     pass

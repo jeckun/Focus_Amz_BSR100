@@ -36,7 +36,6 @@ def parse_string(input_string):
                 i += 1
                 result[n1] = sub_parts[1].strip()
                 result[n2] = int(sub_parts[0].replace(",", "").replace('N/A','0'))
-        del result['子类BSR']
     return result
 
 # 解析评分字符串
@@ -138,6 +137,7 @@ def parse_string_to_dict(data_string):
                     data_dict["URL"] = "https://www.amazon.com/dp/" + value.strip()
                 elif key == "加入产品库":
                     result = parse_string(value)
+                    # del result['子类BSR']
                     data_dict.update(result)
                 elif key == "评分(评分数)": 
                     pass

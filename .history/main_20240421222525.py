@@ -350,7 +350,6 @@ def main():
 
     # 关闭浏览器
     amazon_browser.quit_browser()
-    amazon_browser.driver.quit()
 
 if __name__ == "__main__":
     main()

@@ -112,7 +112,7 @@ class AmazonBrowser:
 
             # 执行向下滚动的 JavaScript 代码
             self.driver.execute_script(f"window.scrollTo(0, {scroll_distance});")
-            time.sleep(2)
+            time.sleep(1)
 
             if new_height > last_height:
                 break
@@ -350,7 +350,6 @@ def main():
 
     # 关闭浏览器
     amazon_browser.quit_browser()
-    amazon_browser.driver.quit()
 
 if __name__ == "__main__":
     main()
