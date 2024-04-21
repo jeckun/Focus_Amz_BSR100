@@ -18,7 +18,7 @@ def load_xlsx_to_db(file_name, ps, sheet_name='Sheet1'):
         df.to_sql('goods', con=engine, if_exists='append', index=False)
         print("Data imported successfully.")
     except Exception as e:
-        print("Data import failed.")
+        print("Data imported f")
 
 # 解析类目排名字符串
 def parse_string(input_string):

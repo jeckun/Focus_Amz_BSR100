@@ -343,7 +343,7 @@ def main():
     df = pd.DataFrame(parsed_data)
     df.to_excel(OUTPUT_FILE, index=False)
 
-    print("Save data to Excel: ", OUTPUT_FILE)
+    print("Save data to Excel:", OUTPUT_FILE)
 
     load_xlsx_to_db(OUTPUT_FILE, RPS)
 

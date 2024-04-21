@@ -8,17 +8,15 @@ from collections import OrderedDict
 # 从 Excel 文件读取数据到 DataFrame
 def load_xlsx_to_db(file_name, ps, sheet_name='Sheet1'):
     print(f'Import file {file_name} to mysql db.')
-    try:
-        df = pd.read_excel(file_name, sheet_name='Sheet1')
+    df = pd.read_excel(file_name, sheet_name='Sheet1')
 
-        # 连接到 MySQL 数据库
-        engine = create_engine(f'mysql+pymysql://root:{ps}@localhost/amazone_goods')
+    # 连接到 MySQL 数据库
+    engine = create_engine(f'mysql+pymysql://root:{ps}@localhost/amazone_goods')
 
-        # 将 DataFrame 中的数据写入到 MySQL 数据库的 goods 表中
-        df.to_sql('goods', con=engine, if_exists='append', index=False)
-        print("Data imported successfully.")
-    except Exception as e:
-        print("Data import failed.")
+    # 将 DataFrame 中的数据写入到 MySQL 数据库的 goods 表中
+    df.to_sql('goods', con=engine, if_exists='append', index=False)
+    print("Data imported successfully.")
+
 
 # 解析类目排名字符串
 def parse_string(input_string):
