@@ -108,13 +108,13 @@ class AmazonBrowser:
 
             # 执行向下滚动的 JavaScript 代码
             self.driver.execute_script(f"window.scrollTo(0, {scroll_distance});")
-            time.sleep(2)
+            time.sleep(3)
 
             if new_height > last_height:
                 break
             scroll_distance += 600
         
-        time.sleep(5)
+        time.sleep(2)
         return
     
     def find_element_by_id(self, id=""):

@@ -23,7 +23,7 @@ for file_name in os.listdir(directory):
             
             # 删除 DataFrame 中数据库中不存在的列
             existing_columns = pd.read_sql_query('SHOW COLUMNS FROM goods', con=engine)['Field']
-            df = df[[col for col in df.columns if col in existing_columns]]
+            df = df[[col for col in df.columns if col in existing_columns.values]]
             
             # 将 ASIN 列转换为字符串类型，并限制长度为 10 位，去除前后空格
             df['ASIN'] = df['ASIN'].astype(str).str[:10].str.strip()
