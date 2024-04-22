@@ -1,23 +1,24 @@
-
+import os
+import pymysql
 import pandas as pd
 import matplotlib.pyplot as plt
-import pymysql
-import os
 from datetime import datetime
-
 
 # 连接到MySQL数据库
 conn = pymysql.connect(host='127.0.0.1', user='root', password='Xsk58&9jS', db='amazone_goods')
 
-
+# 执行SQL查询，读取数据到DataFrame
 query = "SELECT ASIN, `collection time`, 子类BSR FROM goods ORDER BY ASIN, `collection time`"
 df = pd.read_sql(query, conn)
 
-# 找出统计时间段内子类BSR减少最多的5款产品的ASIN
-top_5_asin = df.groupby('ASIN')['子类BSR'].apply(lambda x: x.iloc[-1] - x.iloc[0]).nsmallest(5).index
+# 对数据按照ASIN分组，并按照collection time排序
+df_sorted = df.groupby('ASIN', as_index=False).apply(lambda x: x.sort_values('collection time'))
+
+# 计算每个ASIN的子类BSR变化，并选择变化最大的5个ASIN
+top_5_asin = df_sorted.groupby('ASIN')['子类BSR'].apply(lambda x: x.iloc[0] - x.iloc[-1]).nlargest(5).index
 
 # 提取统计时间段内子类BSR减少最多的5款产品的子类BSR数据
-top_5_data = df[df['ASIN'].isin(top_5_asin)]
+top_5_data = df_sorted[df_sorted['ASIN'].isin(top_5_asin)]
 
 # 制作折线图
 plt.figure(figsize=(10, 6))
