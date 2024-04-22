@@ -7,3 +7,14 @@ ASIN: B00IPS4APU, Collection time: 2024-04-20 22:00:00, Error: (1064, "You have 
 ASIN: B0CZRJY15H, Collection time: 2024-04-20 22:00:00, Error: nan can not be used with MySQL
 ASIN: B0CZRJY15H, Collection time: 2024-04-20 22:00:00, Error: nan can not be used with MySQL
 ASIN: B0CZRJY15H, Collection time: 2024-04-20 22:00:00, Error: nan can not be used with MySQL
+Error importing data from Tumblers & Water Glasses_202404212104.xlsx: 'ASIN'
+Error importing data from Tumblers & Water Glasses_202404220412.xlsx: 'ASIN'
+Error importing data from Tumblers & Water Glasses_202404212104.xlsx: 'ASIN'
+Error importing data from Tumblers & Water Glasses_202404220412.xlsx: 'ASIN'
+Error importing data from Tumblers & Water Glasses_202404212303.xlsx: 'ASIN'
+Error importing data from Tumblers & Water Glasses_202404220726.xlsx: 'ASIN'
+Error importing data from Tumblers & Water Glasses_202404220510.xlsx: 'ASIN'
+Error importing data from Tumblers & Water Glasses_202404212228.xlsx: 'ASIN'
+Error importing data from Tumblers & Water Glasses_202404220912.xlsx: 'ASIN'
+Error importing data from Tumblers & Water Glasses_202404212025.xlsx: 'ASIN'
+Error importing data from Tumblers & Water Glasses_202404220800.xlsx: 'ASIN'
