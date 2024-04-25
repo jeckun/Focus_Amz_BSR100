@@ -8,7 +8,7 @@ from datetime import datetime
 connection = pymysql.connect(host='127.0.0.1', user='root', password='Xsk58&9jS', db='amazone_goods')
 
 # 定义要绘制的ASIN列表
-asins = ['B0CYLCGL31', 'B0BVLYCGQY', 'B0CT5H92QH', 'B076BZ5ZSN', 'B07XCFRNX1']
+asins = ['B0CN95MSRN', 'B0CX52R2T6', 'B0BZYC7VCM', 'B0CYLCGL31', 'B0CW59TK11', 'B0CYSJPNZB', 'B0D25F8PVG','B0C68Q85D2']
 
 try:
     plt.figure(figsize=(12, 6))
